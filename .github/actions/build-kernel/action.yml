@@ -1310,7 +1310,7 @@ runs:
         else
           echo "Hmbird not enabled, skipping fengchi patch"
         fi
-
+        
         overlay_patched=0
         if [ "$(printf '%s\n' "$KERNEL_VERSION" "$MIN_VERSION" | sort -V | head -n1)" = "$KERNEL_VERSION" ]; then
           echo "Kernel <= $MIN_VERSION, skipping module intercept and overlay mechanism patch"
@@ -1320,15 +1320,15 @@ runs:
           overlay_patched=1
           chmod +x ./kernel/module/module_overlay/convert_overlay.sh
         fi
-
+        
         copied_modules=""
         if [ "$overlay_patched" -eq 1 ]; then
           SOC="${OP_BRANCH#*/}"
-
+          
           declare -A selected_file=()
           declare -A selected_priority=()
           selected_count=0
-
+          
           # Define suffixes in order of priority (1 to 7)
           suffixes=(
             "_${OP_MODEL}_${OP_OS_VERSION}_${KERNEL_FULL_VER}.ko"
@@ -1339,33 +1339,33 @@ runs:
             "_${SOC}.ko"
             "_${KERNEL_FULL_VER}.ko"
           )
-
+          
           while IFS= read -r -d '' file; do
             filename="${file##*/}"
             module_name=""
             priority=0
-
+            
             exact_module_name=$(modinfo -F name "$file" 2>/dev/null)
-
+            
             # Evaluate priorities by iterating through the ordered suffixes
             for i in "${!suffixes[@]}"; do
               suffix="${suffixes[$i]}"
               if [[ "$filename" == *"$suffix" ]]; then
                 extracted_name="${filename%"$suffix"}"
                 extracted_normalized="${extracted_name//-/_}"
-
+                
                 if [[ "$extracted_normalized" == "$exact_module_name" ]]; then
                   module_name="$extracted_name"
                   priority=$((i + 1))
                 fi
-
+                
                 break # Match found, stop checking lower priorities
               fi
             done
-
+            
             # File did not match any supported naming pattern.
             [[ -n "$module_name" ]] || continue
-
+            
             if [[ -z "${selected_priority[$module_name]+exists}" ]]; then
               echo "New module: $file"
               selected_file["$module_name"]="$file"
@@ -1377,19 +1377,19 @@ runs:
               selected_priority["$module_name"]="$priority"
             fi
           done < <(find "$KERNEL_PATCHES_FOLDER/oneplus/module_overlay/modules/" -type f -name '*.ko' -print0)
-
+          
           if (( selected_count == 0 )); then
             echo "No matching kernel modules found."
           fi
-
+          
           for module_name in "${!selected_file[@]}"; do
             file="${selected_file[$module_name]}"
             priority="${selected_priority[$module_name]}"
             echo "Copying module '$module_name' priority=$priority: $file"
-
+            
             dest_path="$COMMON_KERNEL_FOLDER/kernel/module/module_overlay/modules/${module_name}.ko"
             cp -v -- "$file" "$dest_path"
-
+            
             if [ -z "$copied_modules" ]; then
               copied_modules="$dest_path"
             else
@@ -1397,9 +1397,12 @@ runs:
             fi
           done
         fi
-
+        
         ccache --set-config=extra_files_to_hash="$copied_modules"
         
+        #if [[ ("$OP_MODEL" == "OP12" || "$OP_MODEL" == "OP13r" || "$OP_MODEL" == "OP-ACE-5") && "$KERNEL_FULL_VER" == "android14-6.1.141" ]]; then
+          sed -i 's|if (test_task_ux(current))|if (system_state == SYSTEM_RUNNING \&\& test_task_ux(current))|' "$COMMON_KERNEL_FOLDER/fs/f2fs/checkpoint.c"
+        #fi
         echo "✅ Other patches applied"
         echo "::endgroup::"
 
