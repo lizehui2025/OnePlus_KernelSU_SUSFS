@@ -1401,11 +1401,25 @@ runs:
         ccache --set-config=extra_files_to_hash="$copied_modules"
         
         # if [[ ("$OP_MODEL" == "OP12" || "$OP_MODEL" == "OP13r" || "$OP_MODEL" == "OP-ACE-5") && "$KERNEL_FULL_VER" == "android14-6.1.141" ]]; then
-        curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/try_vma_lock_based_oppo_mod.patch | patch -p1 -R
-        curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/block_mq_use_local_thread.patch | patch -p1 -R
-        curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/f2fs_ignore_compressed.patch | patch -p1 -R || true
-        curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/pipe_buffer_fix.patch | patch -p1 -R
+        # curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/try_vma_lock_based_oppo_mod.patch | patch -p1 -R
+        # curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/block_mq_use_local_thread.patch | patch -p1 -R
+        # curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/f2fs_ignore_compressed.patch | patch -p1 -R || true
+        # curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/pipe_buffer_fix.patch | patch -p1 -R
         #fi
+
+        if [ "$OP_MODEL" == "OP12" ]; then
+          curl -Ls https://github.com/OnePlusOSS/android_kernel_common_oneplus_sm8650/commit/d86625c3830b59553b4db6b1b383fddd9655cabf.patch | patch -p1 -R
+          curl -Ls https://github.com/OnePlusOSS/android_kernel_common_oneplus_sm8650/commit/fee5750d1c10f13be0c2748f4ce0d0dc155d991a.patch | patch -p1 -R
+        fi
+
+        if [ "$OP_MODEL" == "OP13r" ]; then
+          curl -Ls https://github.com/OnePlusOSS/android_kernel_common_oneplus_sm8650/commit/22c1764374aae3d74fb3ea93ebcd52c7d11fb1b7.patch | patch -p1 -R
+        fi
+
+        if [ "$OP_MODEL" == "OP-ACE-5" ]; then
+          curl -Ls https://github.com/OnePlusOSS/android_kernel_common_oneplus_sm8650/commit/4f94f15548662afbbb3cd7ee2695d8de1f41be92.patch | patch -p1 -R
+          curl -Ls https://github.com/OnePlusOSS/android_kernel_common_oneplus_sm8650/commit/133522590bff69ed43388dadc836f732d1e198ba.patch | patch -p1 -R
+        fi
 
         echo "✅ Other patches applied"
         echo "::endgroup::"
