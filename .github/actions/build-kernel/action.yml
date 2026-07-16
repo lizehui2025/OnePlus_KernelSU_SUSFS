@@ -1401,10 +1401,10 @@ runs:
         ccache --set-config=extra_files_to_hash="$copied_modules"
         
         # if [[ ("$OP_MODEL" == "OP12" || "$OP_MODEL" == "OP13r" || "$OP_MODEL" == "OP-ACE-5") && "$KERNEL_FULL_VER" == "android14-6.1.141" ]]; then
-        # curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/try_vma_lock_based_oppo_mod.patch | patch -p1 -R
-        # curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/block_mq_use_local_thread.patch | patch -p1 -R
-        # curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/f2fs_ignore_compressed.patch | patch -p1 -R || true
-        # curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/pipe_buffer_fix.patch | patch -p1 -R
+        curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/try_vma_lock_based_oppo_mod.patch | patch -p1 -R
+        curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/block_mq_use_local_thread.patch | patch -p1 -R
+        curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/f2fs_ignore_compressed.patch | patch -p1 -R || true
+        curl -Ls https://raw.githubusercontent.com/fatalcoder524/kernel_patches_additional/refs/heads/main/experimental/revert_test/pipe_buffer_fix.patch | patch -p1 -R
         #fi
 
         echo "✅ Other patches applied"
